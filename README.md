@@ -1,6 +1,6 @@
 # Movie Dashboard React App
 
-![Movie Dashboard](https://raw.githubusercontent.com/Hasitha17-git/movie_dashboard/Main.png)
+![Movie Dashboard](https://github.com/Hasitha17-git/movie_dashboard/blob/main/Main.PNG)
 
 This is a simple React-based web application that helps you find movie information by searching for a movie title. It serves as an excellent project to understand the basics of React and API handling in React.
 
