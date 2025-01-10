@@ -12,8 +12,7 @@ This is a simple React-based web application that helps you find movie informati
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Features
 
