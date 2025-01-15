@@ -5,6 +5,7 @@ const initialState = {
   query: '',
   sort: '',
   filter: '',
+  movies: [],
 };
  
 const movieSlice = createSlice({
@@ -17,7 +18,7 @@ const movieSlice = createSlice({
     setQuery(state, action) {
       state.query = action.payload;
     },
-    setSort(state, action) {
+    setSortOrder(state, action) {
       state.sort = action.payload;
     },
     setFilter(state, action) {
@@ -26,6 +27,6 @@ const movieSlice = createSlice({
   },
 });
  
-export const { setSelectedMovie, setQuery, setSort, setFilter } = movieSlice.actions;
+export const { setSelectedMovie, setQuery, setSortOrder, setFilter } = movieSlice.actions;
 export default movieSlice.reducer;
  

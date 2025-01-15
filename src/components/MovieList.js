@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setQuery, setSort, setFilter } from '../redux/slices/movieSlice';
+import { setQuery, setSortOrder, setFilter } from '../redux/slices/movieSlice';
 import { fetchMovies } from '../api/omdbApi';
 import MovieCard from './MovieCard';
 import SortAndFilter from './SortAndFilter';
@@ -27,53 +27,93 @@ const MovieList = () => {
   const [isLoading, setIsLoading] = useState(true);
   //const [error, setError] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
-
   useEffect(() => {
     const fetchMoviesData = async () => {
       setIsLoading(true);
-      // Fetch movies based on query, current page, sort, and filter
-      const data = await fetchMovies(query, currentPage, sort, filter);
-      console.log('Fetched Movies:',data);
+   
+      const data = await fetchMovies(query, currentPage);
       const fetchedMovies = data.Search || [];
-      console.log('Movies:',fetchedMovies);
-      setTotalPages(Math.ceil((data.totalResults || 0) / 10));
-
-      // Now, sort the fetched movies based on the selected sort criteria
-      let sortedMovies = [...fetchedMovies];
-
-      // Apply sorting if needed
-      if (sort === 'year') {
-        sortedMovies = sortedMovies.sort((a, b) => parseInt(b.Year) - parseInt(a.Year)); // Sort by year
-      } else if (sort === 'rating') {
-        sortedMovies = sortedMovies.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating)); // Sort by rating
-      }
-
-      // Apply filtering if needed
-      if (filter) {
-        console.log('Before Filtering:',sortedMovies);
-        console.log(`Filtering by genre: ${filter}`);
-        sortedMovies = sortedMovies.filter(movie =>{
-            console.log(`Movie Genre: ${movie.Genre}`);
+      console.log('Fetched Movies:',fetchedMovies);
+      // Filter by genre
+      const filteredMovies = filter && filter !== 'All' 
+          ? fetchedMovies.filter(movie =>{ 
             const genres = movie.Genre ? movie.Genre.split(',').map(g => g.trim().toLowerCase()) : [];
             return genres.includes(filter.toLowerCase());
-        });
-        console.log('After Filtering:',sortedMovies);
-      }
-
+          })
+          : fetchedMovies;
+      console.log('Filtered Movies:',filteredMovies);
+      // Sort by the selected criteria
+      const sortedMovies = filteredMovies.sort((a, b) => {
+        const [criteria, order] = sort.split('-');
+        const multiplier = order === 'asc' ? 1 : -1;
+   
+        if (criteria === 'releaseDate') {
+          return (new Date(a.Year) - new Date(b.Year)) * multiplier;
+        } else if (criteria === 'rating') {
+          return (parseFloat(a.imdbRating || 0) - parseFloat(b.imdbRating || 0)) * multiplier;
+        }
+   
+        return 0;
+      });
+      
       setMovies(sortedMovies);
+      setMovies(filteredMovies);
+      setTotalPages(Math.ceil((data.totalResults || 0) / 10));
       setIsLoading(false);
+      console.log('Sorted Movies:',sortedMovies);
     };
-
+   
     fetchMoviesData();
   }, [query, sort, filter, currentPage]);
 
+//   useEffect(() => {
+//     const fetchMoviesData = async () => {
+//       setIsLoading(true);
+//       // Fetch movies based on query, current page, sort, and filter
+//       const data = await fetchMovies(query, currentPage, sort, filter);
+//       console.log('Fetched Movies:',data);
+//       const fetchedMovies = data.Search || [];
+//       console.log('Movies:',fetchedMovies);
+//       setTotalPages(Math.ceil((data.totalResults || 0) / 10));
+
+//       // Now, sort the fetched movies based on the selected sort criteria
+//       let sortedMovies = [...fetchedMovies];
+
+//       // Apply sorting if needed
+//       if (sort === 'year') {
+//         sortedMovies = sortedMovies.sort((a, b) => parseInt(b.Year) - parseInt(a.Year)); // Sort by year
+//       } else if (sort === 'rating') {
+//         sortedMovies = sortedMovies.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating)); // Sort by rating
+//       }
+
+//       // Apply filtering if needed
+//       if (filter) {
+//         console.log('Before Filtering:',sortedMovies);
+//         console.log(`Filtering by genre: ${filter}`);
+//         sortedMovies = sortedMovies.filter(movie =>{
+//             console.log(`Movie Genre: ${movie.Genre}`);
+//             const genres = movie.Genre ? movie.Genre.split(',').map(g => g.trim().toLowerCase()) : [];
+//             return genres.includes(filter.toLowerCase());
+//         });
+//         console.log('After Filtering:',sortedMovies);
+//       }
+
+//       setMovies(sortedMovies);
+//       setIsLoading(false);
+//     };
+
+//     fetchMoviesData();
+//   }, [query, sort, filter, currentPage]);
+
   const handleSortChange = (value) => {
-    dispatch(setSort(value));
+    dispatch(setSortOrder(value));
   };
 
   const handleFilterChange = (value) => {
+    console.log('Filter:',filter);
     console.log("Selected genre:",value);
     dispatch(setFilter(value));
+    
   };
 
   const handleSearchChange = (value) => {

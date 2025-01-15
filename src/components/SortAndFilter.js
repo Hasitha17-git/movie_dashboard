@@ -15,31 +15,25 @@ const Select = styled.select`
   font-size: 1rem;
 `;
 
-// const Button = styled.button`
-//   padding: 10px 20px;
-//   background-color: #3498db;
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   font-size: 1rem;
-//   cursor: pointer;
-
-//   &:hover {
-//     background-color: #2980b9;
-//   }
-// `;
-
-const SortAndFilter = ({ sort, filter, onSortChange, onFilterChange }) => (
-  <Container>
+const SortAndFilter = ({ sort, filter, onSortChange, onFilterChange }) => {
+    const handleSortChange = (e) => {
+      onSortChange(e.target.value);
+    };
    
-    <Select value={filter} onChange={(e) => onFilterChange(e.target.value)}>
-      <option value="">Filter by Genre</option>
-      <option value="Action">Action</option>
-      <option value="Comedy">Comedy</option>
-      <option value="Drama">Drama</option>
-      <option value="Adventure">Adventure</option>
-      <option value="Biography">Biography</option>
-      <option value="Crime">Crime</option>
+    const handleFilterChange = (e) => {
+      onFilterChange(e.target.value);
+    };
+   
+    return (
+      <Container>
+        <Select value={filter} onChange={handleFilterChange}>
+          <option value="All">All Genres</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+          <option value="Adventure">Adventure</option>
+          <option value="Biography">Biography</option>
+          <option value="Crime">Crime</option>
       <option value="Documentary">Documentary</option>
       <option value="Family">Family</option>
       <option value="Fantasy">Fantasy</option>
@@ -57,14 +51,16 @@ const SortAndFilter = ({ sort, filter, onSortChange, onFilterChange }) => (
       <option value="Thriller">Thriller</option>
       <option value="War">War</option>
       <option value="Western">Western</option>
-    </Select>
-    <Select value={sort} onChange={(e) => onSortChange(e.target.value)}>
-      <option value="">Sort by</option>
-      <option value="year">Year</option>
-      <option value="rating">Rating</option>
-    </Select>
-    {/* <Button onClick={() => onSearchChange()}>Submit</Button> */}
-  </Container>
-);
-
+        </Select>
+        <Select value={sort} onChange={handleSortChange}>
+          <option value="">Sort By</option>
+          <option value="releaseDate-asc">Release Date (Ascending)</option>
+          <option value="releaseDate-desc">Release Date (Descending)</option>
+          <option value="rating-asc">Rating (Ascending)</option>
+          <option value="rating-desc">Rating (Descending)</option>
+        </Select>
+      </Container>
+    );
+  };
+   
 export default SortAndFilter;
