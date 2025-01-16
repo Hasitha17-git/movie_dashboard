@@ -45,12 +45,7 @@ const RetryButton = styled.button`
     background-color: #c0392b;
   }
 `;
- 
-// const MovieDetails = () => {
-//   const { id } = useParams();
-//   const { data, isLoading, error } = useQuery(['movieDetails', id], () =>
-//     fetchMovieDetails(id)
-//   );
+
 const MovieDetails = () => {
     const { id } = useParams();
   

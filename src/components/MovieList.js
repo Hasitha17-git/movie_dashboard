@@ -31,8 +31,9 @@ const MovieList = () => {
     const fetchMoviesData = async () => {
       setIsLoading(true);
    
-      const data = await fetchMovies(query, currentPage);
+      const data = await fetchMovies(query,currentPage);
       const fetchedMovies = data.Search || [];
+      setTotalPages(Math.ceil((data.totalResults|| 0)/10));
       console.log('Fetched Movies:',fetchedMovies);
       // Filter by genre
       const filteredMovies = filter && filter !== 'All' 
@@ -55,9 +56,8 @@ const MovieList = () => {
    
         return 0;
       });
-      
-      setMovies(sortedMovies);
       setMovies(filteredMovies);
+      setMovies(sortedMovies);
       setTotalPages(Math.ceil((data.totalResults || 0) / 10));
       setIsLoading(false);
       console.log('Sorted Movies:',sortedMovies);
@@ -65,45 +65,6 @@ const MovieList = () => {
    
     fetchMoviesData();
   }, [query, sort, filter, currentPage]);
-
-//   useEffect(() => {
-//     const fetchMoviesData = async () => {
-//       setIsLoading(true);
-//       // Fetch movies based on query, current page, sort, and filter
-//       const data = await fetchMovies(query, currentPage, sort, filter);
-//       console.log('Fetched Movies:',data);
-//       const fetchedMovies = data.Search || [];
-//       console.log('Movies:',fetchedMovies);
-//       setTotalPages(Math.ceil((data.totalResults || 0) / 10));
-
-//       // Now, sort the fetched movies based on the selected sort criteria
-//       let sortedMovies = [...fetchedMovies];
-
-//       // Apply sorting if needed
-//       if (sort === 'year') {
-//         sortedMovies = sortedMovies.sort((a, b) => parseInt(b.Year) - parseInt(a.Year)); // Sort by year
-//       } else if (sort === 'rating') {
-//         sortedMovies = sortedMovies.sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating)); // Sort by rating
-//       }
-
-//       // Apply filtering if needed
-//       if (filter) {
-//         console.log('Before Filtering:',sortedMovies);
-//         console.log(`Filtering by genre: ${filter}`);
-//         sortedMovies = sortedMovies.filter(movie =>{
-//             console.log(`Movie Genre: ${movie.Genre}`);
-//             const genres = movie.Genre ? movie.Genre.split(',').map(g => g.trim().toLowerCase()) : [];
-//             return genres.includes(filter.toLowerCase());
-//         });
-//         console.log('After Filtering:',sortedMovies);
-//       }
-
-//       setMovies(sortedMovies);
-//       setIsLoading(false);
-//     };
-
-//     fetchMoviesData();
-//   }, [query, sort, filter, currentPage]);
 
   const handleSortChange = (value) => {
     dispatch(setSortOrder(value));
@@ -126,8 +87,23 @@ const MovieList = () => {
     setCurrentPage(page);
   };
 
+    // // Infinite scroll handler
+    // const handleScroll = () => {
+    //     if (
+    //       window.innerHeight + document.documentElement.scrollTop >=
+    //       document.documentElement.offsetHeight - 100
+    //     ) {
+    //       setCurrentPage((prev) => prev + 1);
+    //     }
+    //   };
+     
+    //   useEffect(() => {
+    //     window.addEventListener("scroll", handleScroll);
+    //     return () => window.removeEventListener("scroll", handleScroll);
+    //   }, []);
+
   if (isLoading) return <Loader />;
-  //if (error) return <p>{error}</p>;
+ 
   
   return (
     <Container>
@@ -137,7 +113,6 @@ const MovieList = () => {
         filter={filter}
         onSortChange={handleSortChange}
         onFilterChange={handleFilterChange}
-        // onSearchChange={handleSearchChange}
       />
       <Grid>
         {movies.length > 0 ? (
